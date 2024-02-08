@@ -25,9 +25,10 @@ import {
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
 import { MedicDateComponent } from './components/medic-date/medic-date.component';
-import { MedicDate } from './interfaces/IMedicDate';
+import { IMedicDate } from './interfaces/IMedicDate';
+import { MedicDateAPIService } from './services/clinique/medic-date-api.service';
 
-const colors: Record<string, EventColor> = {
+export var colors: Record<string, EventColor> = {
   red: {
     primary: '#ad2121',
     secondary: '#FAE3E3',
@@ -49,13 +50,51 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  constructor(
+    private modal: NgbModal,
+    private httpRequest: MedicDateAPIService
+  ) {
+    console.log(this.events);
+    //this.events = [...this.events, ...this.md_ce];
+  }
+
   //!----------------Para mostrar en el calendario-----------------------
+  private medic_dates: IMedicDate[] = [];
+  private md_ce: CalendarEvent[] = [];
 
-  @Input() medic_dates: MedicDate[] = [];
-  MedicD_CalenerE = [];
-  private MeiclDateMapperToCalendarEvent(): void {}
+  ngOnInit() {
+    this.httpRequest.getRequest().subscribe(
+      (res) => {
+        console.log(res);
+        this.medic_dates = res;
+        this.MeiclDateMapperToCalendarEvent();
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
 
+  private MeiclDateMapperToCalendarEvent(): void {
+    this.md_ce = this.medic_dates.map((md) => ({
+      start: startOfDay(new Date(md.date)),
+      end: endOfDay(new Date(md.date)),
+      title: md.patient,
+      color: { ...colors['red'] },
+      actions: this.actions,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      draggable: true,
+    }));
+
+    //! Agregamos Citas Medicas
+    console.log('---LA LISTA SE LLENO---');
+    this.events = [...this.events, ...this.md_ce];
+  }
   //!---------------------------------------------------------------------
+
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
@@ -128,11 +167,10 @@ export class AppComponent {
       },
       draggable: true,
     },
+    //...this.md_ce,
   ];
 
   activeDayIsOpen: boolean = true;
-
-  constructor(private modal: NgbModal) {}
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {

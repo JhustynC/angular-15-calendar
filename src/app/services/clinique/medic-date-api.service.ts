@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { MedicDate } from 'src/app/interfaces/IMedicDate';
+import { IMedicDate } from 'src/app/interfaces/IMedicDate';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +11,7 @@ export class MedicDateAPIService {
 
   constructor(private http: HttpClient) {}
 
-  getRequest(): Observable<MedicDate[]> {
-    return this.http.get<MedicDate[]>(this.url_api);
+  getRequest(): Observable<IMedicDate[]> {
+    return this.http.get<IMedicDate[]>(this.url_api);
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MedicDate } from 'src/app/interfaces/IMedicDate';
+import { IMedicDate } from 'src/app/interfaces/IMedicDate';
 import { MedicDateAPIService } from 'src/app/services/clinique/medic-date-api.service';
 
 @Component({
@@ -8,7 +8,7 @@ import { MedicDateAPIService } from 'src/app/services/clinique/medic-date-api.se
   styleUrls: ['./medic-date.component.css'],
 })
 export class MedicDateComponent {
-  public medic_dates: MedicDate[] = [];
+  public medic_dates: IMedicDate[] = [];
   constructor(private httpRequest: MedicDateAPIService) {}
 
   ngOnInit() {
